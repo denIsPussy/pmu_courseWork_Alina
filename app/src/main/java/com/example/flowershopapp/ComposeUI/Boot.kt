@@ -5,10 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -17,7 +13,7 @@ import com.example.flowershopapp.R
 import kotlinx.coroutines.delay
 
 @Composable
-fun Boot(navController: NavController){
+fun Boot(navController: NavController) {
     LaunchedEffect(Unit) {
         delay(2000)
         navController.navigate("Login")

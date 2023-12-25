@@ -12,17 +12,21 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface OrderDAO {
-    @Query("""
+    @Query(
+        """
         SELECT orders.* FROM orders
         WHERE userId = :userId
-    """)
+    """
+    )
     fun getOrdersByUser(userId: Int): PagingSource<Int, Order>
 
-    @Query("""
+    @Query(
+        """
         SELECT bouquets.* FROM bouquets
         INNER JOIN orderbouquetcrossref ON bouquets.bouquetId = orderbouquetcrossref.bouquetId
         WHERE orderbouquetcrossref.orderId = :orderId
-    """)
+    """
+    )
     fun getBouquetsByOrder(orderId: Int): Flow<List<Bouquet>>
 
     @Query("select * from orders")

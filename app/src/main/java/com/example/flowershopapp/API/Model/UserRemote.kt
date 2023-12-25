@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserRemote(
-    val id: Int = 0,
+    val id: Int? = null,
     val userName: String = "",
     val dateOfBirth: String = "",
     val phoneNumber: String = "",
@@ -21,7 +21,7 @@ fun UserRemote.toUser(): User = User(
 )
 
 fun User.toUserRemote(): UserRemote = UserRemote(
-    userId ?: 0,
+    null,
     userName,
     dateOfBirth,
     phoneNumber,

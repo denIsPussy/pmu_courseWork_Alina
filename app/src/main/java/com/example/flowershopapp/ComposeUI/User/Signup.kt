@@ -3,10 +3,8 @@ package com.example.flowershopapp.ComposeUI.User
 import android.app.DatePickerDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,20 +14,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,14 +45,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.flowershopapp.ComposeUI.AppViewModelProvider
 import com.example.flowershopapp.ComposeUI.Navigation.Screen
-import com.example.flowershopapp.Entities.Model.OrderByDate
 import com.example.flowershopapp.R
 import java.util.Calendar
 
 @Composable
 fun Signup(
     navController: NavController,
-   viewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -80,7 +73,10 @@ fun Signup(
         context,
         { _, year, month, dayOfMonth ->
             dateOfBirth = "$year-${month + 1}-$dayOfMonth"
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
     )
 
     fun validateInput(): Boolean {
@@ -119,7 +115,7 @@ fun Signup(
 
     fun register() {
         if (validateInput()) {
-            viewModel.registerUser(username, password, dateOfBirth, phoneNumber){
+            viewModel.registerUser(username, password, dateOfBirth, phoneNumber) {
                 navController.navigate(Screen.Login.route)
             }
         }
@@ -135,9 +131,14 @@ fun Signup(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(painter = painterResource(id = R.drawable.logo), contentDescription = "", Modifier.size(180.dp))
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "",
+                Modifier.size(180.dp)
+            )
         }
         Column(
             modifier = Modifier
@@ -154,10 +155,6 @@ fun Signup(
             )
             Spacer(modifier = Modifier.height(16.dp))
             TextField(
-                modifier = Modifier
-                    .onGloballyPositioned { coordinates ->
-                        width = coordinates.size.width.dp
-                    },
                 value = username,
                 onValueChange = { username = it },
                 label = { Text("Имя пользователя") },
@@ -187,7 +184,6 @@ fun Signup(
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier
-                    .width(width)
                     .background(colorResource(id = R.color.textFieldContainer))
                     .clickable { dateOfBirthDialog.show() }
 
@@ -215,7 +211,8 @@ fun Signup(
                 onClick = { register() },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.button)
-            )) {
+                )
+            ) {
                 Text("Создать")
             }
             Spacer(modifier = Modifier.height(16.dp))

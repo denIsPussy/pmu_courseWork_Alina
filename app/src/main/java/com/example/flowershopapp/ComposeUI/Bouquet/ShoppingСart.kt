@@ -2,7 +2,6 @@ package com.example.flowershopapp.Entities.ComposeUI
 
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,14 +15,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -33,13 +28,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,8 +48,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.flowershopapp.ComposeUI.AppViewModelProvider
-import com.example.flowershopapp.ComposeUI.Bouquet.BouquetCard
-import com.example.flowershopapp.ComposeUI.Bouquet.BouquetCatalogViewModel
 import com.example.flowershopapp.ComposeUI.User.OrderViewModel
 import com.example.flowershopapp.Entities.Model.AuthModel
 import com.example.flowershopapp.Entities.Model.Bouquet
@@ -76,9 +67,14 @@ fun ShoppingCart(
     val totalSum by CartModel.instance.totalSum.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally,) {
+    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = "Корзина", fontFamily = FontFamily.Serif, fontSize = 40.sp, fontWeight = FontWeight.W600)
+        Text(
+            text = "Корзина",
+            fontFamily = FontFamily.Serif,
+            fontSize = 40.sp,
+            fontWeight = FontWeight.W600
+        )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceAround
@@ -89,7 +85,11 @@ fun ShoppingCart(
                     val currentDate = LocalDate.now()
                     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
                     val formattedDate = currentDate.format(formatter)
-                    val order = Order(date = formattedDate, sum = totalSum, userId = AuthModel.currentUser.userId!!)
+                    val order = Order(
+                        date = formattedDate,
+                        sum = totalSum,
+                        userId = AuthModel.currentUser.userId!!
+                    )
                     viewModel.createOrder(order, bouquets.toMutableList())
                     showDialog = true
                 },
@@ -128,7 +128,7 @@ fun ShoppingCart(
         }
         val padding = if (bouquets.size == 1) 95.dp else 0.dp
         LazyVerticalGrid(
-            columns = GridCells.Fixed(if (bouquets.size == 1) 1 else 2 ),
+            columns = GridCells.Fixed(if (bouquets.size == 1) 1 else 2),
             contentPadding = PaddingValues(start = padding, end = padding),
             modifier = Modifier.fillMaxSize()
         ) {
@@ -140,7 +140,7 @@ fun ShoppingCart(
 }
 
 @Composable
-fun CartBouquetCard(bouquetPair: Pair<Bouquet, Int>){
+fun CartBouquetCard(bouquetPair: Pair<Bouquet, Int>) {
     val bouquet = bouquetPair.first
     val countBouquet = bouquetPair.second
     var heart by remember { mutableStateOf(FavoriteModel.instance.containsBouquet(bouquet)) }
@@ -150,7 +150,7 @@ fun CartBouquetCard(bouquetPair: Pair<Bouquet, Int>){
             .padding(8.dp)
             .fillMaxWidth()
             .wrapContentHeight(),
-            //.height(340.dp)
+
         elevation = CardDefaults.cardElevation(
             defaultElevation = 10.dp
         ),
@@ -168,7 +168,7 @@ fun CartBouquetCard(bouquetPair: Pair<Bouquet, Int>){
                         contentDescription = null,
                         modifier = Modifier
                             .height(190.dp)
-                            //.width(210.dp)
+
                             .clip(shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)),
                         contentScale = ContentScale.FillBounds
                     )
@@ -208,11 +208,19 @@ fun CartBouquetCard(bouquetPair: Pair<Bouquet, Int>){
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = bouquet.name, fontFamily = FontFamily.Serif, fontSize = 20.sp)
-            Text(text = "${bouquet.quantityOfFlowers} цветов", fontFamily = FontFamily.Serif, fontSize = 15.sp)
+            Text(
+                text = "${bouquet.quantityOfFlowers} цветов",
+                fontFamily = FontFamily.Serif,
+                fontSize = 15.sp
+            )
             Text(text = "${bouquet.price}", fontFamily = FontFamily.Serif, fontSize = 15.sp)
             Spacer(modifier = Modifier.height(5.dp))
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.height(50.dp)) {
-                Box(modifier = Modifier.fillMaxHeight(0.5f)){
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceAround,
+                modifier = Modifier.height(50.dp)
+            ) {
+                Box(modifier = Modifier.fillMaxHeight(0.5f)) {
                     Icon(
                         painter = painterResource(id = R.drawable.icon_minus_cirlce),
                         contentDescription = "",
@@ -221,10 +229,10 @@ fun CartBouquetCard(bouquetPair: Pair<Bouquet, Int>){
                         }
                     )
                 }
-                Box(){
+                Box() {
                     Text(text = "${countBouquet}")
                 }
-                Box(modifier = Modifier.fillMaxHeight(0.5f)){
+                Box(modifier = Modifier.fillMaxHeight(0.5f)) {
                     Icon(
                         painter = painterResource(id = R.drawable.icon_add_circle),
                         contentDescription = "",

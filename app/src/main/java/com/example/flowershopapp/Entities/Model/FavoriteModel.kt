@@ -1,7 +1,5 @@
 package com.example.flowershopapp.Entities.Model
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.flowershopapp.R
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,6 +44,7 @@ class FavoriteModel : ViewModel() {
     fun clearBouquets() {
         _favoriteList.value = emptyList()
     }
+
     companion object {
         val instance: FavoriteModel by lazy { FavoriteModel() }
     }

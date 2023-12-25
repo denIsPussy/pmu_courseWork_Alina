@@ -10,10 +10,13 @@ import com.example.flowershopapp.Entities.Model.OrderBouquetCrossRef
 interface OrdersWithBouquet {
     @Query("select * from orderbouquetcrossref")
     fun getAll(): List<OrderBouquetCrossRef>
+
     @Insert
     suspend fun insert(vararg order: OrderBouquetCrossRef)
+
     @Delete
     suspend fun delete(order: OrderBouquetCrossRef)
+
     @Query("DELETE FROM orderbouquetcrossref")
     suspend fun deleteAll()
 }

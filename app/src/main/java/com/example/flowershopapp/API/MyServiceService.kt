@@ -86,12 +86,6 @@ interface MyServerService {
     @GET("bouquets")
     suspend fun getAllBouquets(): List<BouquetRemote>
 
-    @GET("bouquets")
-    suspend fun getBouquetsSortedByPrice(
-        @Query("_sort") sortBy: String,
-        @Query("_order") order: String
-    ): List<BouquetRemote>
-
     @GET("bouquets/{id}")
     suspend fun getBouquet(
         @Path("id") id: Int,
@@ -123,11 +117,6 @@ interface MyServerService {
 
     @DELETE("orderBouquetCrossRefs/{id}")
     suspend fun deleteOrderBouquet(
-        @Path("id") id: Int,
-    )
-
-    @DELETE("userOrderCrossRefs/{id}")
-    suspend fun deleteUserOrder(
         @Path("id") id: Int,
     )
 

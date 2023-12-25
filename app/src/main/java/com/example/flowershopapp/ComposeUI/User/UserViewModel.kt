@@ -28,7 +28,13 @@ class UserViewModel(
     }
 
 
-    fun registerUser(username: String, password: String, dateOfBirth: String, phoneNumber: String, relocate: () -> Unit) {
+    fun registerUser(
+        username: String,
+        password: String,
+        dateOfBirth: String,
+        phoneNumber: String,
+        relocate: () -> Unit
+    ) {
         viewModelScope.launch {
             val user = userRepository.insert(User(username, dateOfBirth, phoneNumber, password))
             if (user != null)

@@ -3,7 +3,7 @@ package com.example.flowershopapp.Entities.Repository.User
 import com.example.flowershopapp.Entities.DAO.UserDAO
 import com.example.flowershopapp.Entities.Model.User
 
-class OfflineUserRepository(private val userDAO: UserDAO) : UserRepository{
+class OfflineUserRepository(private val userDAO: UserDAO) : UserRepository {
     override suspend fun getAll(): List<User> = userDAO.getAll()
     override suspend fun getUserByName(userName: String): User = userDAO.getUserByName(userName)
     override suspend fun insert(user: User) = userDAO.insert(user)

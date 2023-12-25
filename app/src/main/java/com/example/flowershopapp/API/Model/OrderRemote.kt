@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OrderRemote(
-    val id: Int? = 0,
+    val id: Int? = null,
     val date: String = "",
     val sum: Int = 0,
     val userId: Int = 0,
@@ -19,7 +19,7 @@ fun OrderRemote.toOrder(): Order = Order(
 )
 
 fun Order.toOrderRemote(): OrderRemote = OrderRemote(
-    orderId,
+    null,
     date,
     sum,
     userId

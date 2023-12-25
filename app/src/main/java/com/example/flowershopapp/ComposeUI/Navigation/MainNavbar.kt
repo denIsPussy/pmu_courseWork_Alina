@@ -1,8 +1,6 @@
 package com.example.flowershopapp.ComposeUI.Navigation
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,13 +8,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -28,7 +23,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,9 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -78,7 +70,11 @@ fun Topbar(
 
         title = {
             if (showImage) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Column(horizontalAlignment = Alignment.End) {
                         Image(
                             painter = painterResource(id = R.drawable.logo),
@@ -105,8 +101,7 @@ fun Topbar(
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
-            }
-            else{
+            } else {
                 showImage = true
             }
         }
@@ -119,19 +114,24 @@ fun Navbar1(
     currentDestination: NavDestination?,
     modifier: Modifier = Modifier
 ) {
-        NavigationBar(
-            modifier = modifier
-                .height(55.dp)
-                .clip(RoundedCornerShape(20.dp))
-        ) {
+    NavigationBar(
+        modifier = modifier
+            .height(55.dp)
+            .clip(RoundedCornerShape(20.dp))
+    ) {
         Screen.bottomBarItems.forEach { screen ->
             NavigationBarItem(
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = Color.LightGray
                 ),
                 modifier = modifier.padding(10.dp),
-                icon = { Icon(painter = painterResource(screen.icon!!), contentDescription = null) },
-                //label = { Text(stringResource(screen.resourceId)) },
+                icon = {
+                    Icon(
+                        painter = painterResource(screen.icon!!),
+                        contentDescription = null
+                    )
+                },
+
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                 onClick = {
                     navController.navigate(screen.route) {
@@ -146,6 +146,7 @@ fun Navbar1(
         }
     }
 }
+
 @Composable
 fun Navbar(
     navController: NavHostController,
@@ -156,7 +157,8 @@ fun Navbar(
         modifier = Modifier
             .fillMaxWidth()
             .height(95.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Screen.bottomBarItems.forEach { screen ->
             val isSelected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
@@ -202,7 +204,7 @@ fun Navbar(
 fun Navhost(
     navController: NavHostController,
     innerPadding: PaddingValues,
-    startScreen : String,
+    startScreen: String,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -228,7 +230,8 @@ fun Navhost(
             Screen.OrderBouquets.route,
             arguments = listOf(navArgument("id") {
                 type = NavType.IntType
-            }))
+            })
+        )
         {
             OrderBouquets()
         }
@@ -252,7 +255,7 @@ fun MainNavbar() {
         bottomBar = {
             if (currentScreen == null || (currentScreen.showInBottomBar && currentScreen.showTopBarAndNavBar)) {
                 Navbar(navController, currentDestination)
-                //Navbar(navController, currentDestination)
+
             }
         }
     ) { innerPadding ->

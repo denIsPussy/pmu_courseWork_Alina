@@ -12,14 +12,19 @@ import com.example.flowershopapp.Entities.Model.Bouquet
 interface BouquetDAO {
     @Query("select * from bouquets")
     fun getAll(): PagingSource<Int, Bouquet>
+
     @Query("select * from bouquets where bouquetId = :id")
     fun getBouquet(id: Int): Bouquet
+
     @Insert
     suspend fun insert(vararg bouquet: Bouquet)
+
     @Update
     suspend fun update(bouquet: Bouquet)
+
     @Delete
     suspend fun delete(bouquet: Bouquet)
+
     @Query("DELETE FROM bouquets")
     suspend fun deleteAll()
 }

@@ -4,8 +4,6 @@ import android.util.Log
 import com.example.flowershopapp.API.Model.toUser
 import com.example.flowershopapp.API.Model.toUserRemote
 import com.example.flowershopapp.API.MyServerService
-import com.example.flowershopapp.Database.AppDatabase
-import com.example.flowershopapp.Database.RemoteKeys.Repository.OfflineRemoteKeyRepository
 import com.example.flowershopapp.Entities.Model.User
 import com.example.flowershopapp.Entities.Repository.User.OfflineUserRepository
 import com.example.flowershopapp.Entities.Repository.User.UserRepository
@@ -35,7 +33,7 @@ class RestUserRepository(
                 }
                 existUsers[user.userId!!] = user
             }
-        //return existUsers.map { it.value }.sortedBy { it.userId }
+
         return service.getUsers().map { it.toUser() }
     }
 

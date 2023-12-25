@@ -1,6 +1,5 @@
 package com.example.flowershopapp.ComposeUI.Order
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +10,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,10 +35,13 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun Orders(navController: NavController, viewModel: OrderViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
-    //val context = LocalContext.current
-    //val (userWithOrders, setUserWithOrders) = remember { mutableStateOf<UsersWithOrders?>(null) }
-    var ordersListUiState = viewModel.ordersListUiState?.collectAsLazyPagingItems()
+fun Orders(
+    navController: NavController,
+    viewModel: OrderViewModel = viewModel(factory = AppViewModelProvider.Factory)
+) {
+
+
+    val ordersListUiState = viewModel.ordersListUiState.collectAsLazyPagingItems()
     val refreshScope = rememberCoroutineScope()
     var refreshing by remember { mutableStateOf(false) }
     fun refresh() = refreshScope.launch {
@@ -48,44 +49,27 @@ fun Orders(navController: NavController, viewModel: OrderViewModel = viewModel(f
         ordersListUiState?.refresh()
         refreshing = false
     }
+
     val state = rememberPullRefreshState(refreshing, ::refresh)
-    LazyColumn(modifier = Modifier
-        .pullRefresh(state)
-        .padding(top = 16.dp)) {
-        //var orders = userWithOrders?.orders
-        ordersListUiState?.let {
-            items(count = it.itemCount, key = ordersListUiState.itemKey(), contentType = ordersListUiState.itemContentType()){ index ->
-                val order = ordersListUiState[index]
-                order?.let {
-                        //it -> OrderItem(order = it) { navController.navigate(Screen.OrderBouquets.route.replace("{id}", order.orderId.toString())) }
-                    Card(
-                        //border = BorderStroke(2.dp, Color.Black),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 10.dp,
-                            focusedElevation = 20.dp
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 5.dp, bottom = 20.dp, start = 30.dp, end = 30.dp)
-                            .clickable {
-                                navController.navigate(
-                                    Screen.OrderBouquets.route.replace(
-                                        "{id}",
-                                        order.orderId.toString()
-                                    )
-                                )
-                            },
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)){
-                            Text(text = "Номер заказа: ${order.orderId}", fontWeight = FontWeight.Bold)
-                            Text(text = "Дата: ${order.date}")
-                            Text(text = "Сумма: ${order.sum}")
-                        }
-                    }
+    LazyColumn(
+        modifier = Modifier
+            .pullRefresh(state)
+            .padding(top = 16.dp)
+    ) {
+        items(
+            count = ordersListUiState.itemCount,
+            key = ordersListUiState.itemKey(),
+            contentType = ordersListUiState.itemContentType()
+        ) { index ->
+            val order = ordersListUiState[index]
+            order?.let {
+                OrderItem(order){
+                    navController.navigate(
+                        Screen.OrderBouquets.route.replace(
+                            "{id}",
+                            order.orderId.toString()
+                        )
+                    )
                 }
             }
         }
@@ -95,13 +79,29 @@ fun Orders(navController: NavController, viewModel: OrderViewModel = viewModel(f
 @Composable
 fun OrderItem(order: Order, action: () -> Unit) {
     Card(
+
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 10.dp,
+            focusedElevation = 20.dp
+        ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .clickable { action }
+            .padding(top = 5.dp, bottom = 20.dp, start = 30.dp, end = 30.dp)
+            .clickable {
+                action()
+            },
     ) {
-        Text(text = "ID: ${order.orderId}", fontWeight = FontWeight.Bold)
-        Text(text = "Date: ${order.date}")
-        Text(text = "Sum: ${order.sum}")
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Номер заказа: ${order.orderId}",
+                fontWeight = FontWeight.Bold
+            )
+            Text(text = "Дата: ${order.date}")
+            Text(text = "Сумма: ${order.sum}")
+        }
     }
 }

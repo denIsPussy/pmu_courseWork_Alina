@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OrderBouquetCrossRefRemote(
-    val id: Int = 0,
+    val id: Int? = null,
     val orderId: Int = 0,
     val bouquetId: Int = 0,
     val count: Int = 0,
@@ -17,8 +17,10 @@ fun OrderBouquetCrossRefRemote.OrderBouquetCrossRef(): OrderBouquetCrossRef = Or
     count
 )
 
-fun OrderBouquetCrossRef.OrderBouquetCrossRefRemote(): OrderBouquetCrossRefRemote = OrderBouquetCrossRefRemote(
-    orderId,
-    bouquetId,
-    count
-)
+fun OrderBouquetCrossRef.OrderBouquetCrossRefRemote(): OrderBouquetCrossRefRemote =
+    OrderBouquetCrossRefRemote(
+        null,
+        orderId,
+        bouquetId,
+        count
+    )

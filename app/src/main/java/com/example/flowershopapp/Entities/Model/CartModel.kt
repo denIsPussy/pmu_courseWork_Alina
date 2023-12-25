@@ -16,7 +16,8 @@ class CartModel : ViewModel() {
 
     fun updateList(bouquet: Bouquet): Int {
         val currentList = _cartList.value.toMutableList()
-        val isContains = currentList.find { bouquetPair -> bouquetPair.first.bouquetId == bouquet.bouquetId } != null
+        val isContains =
+            currentList.find { bouquetPair -> bouquetPair.first.bouquetId == bouquet.bouquetId } != null
         return if (isContains) {
             val currElement = currentList.find { it.first.bouquetId == bouquet.bouquetId }
             currentList.remove(currElement)
@@ -39,7 +40,7 @@ class CartModel : ViewModel() {
             val indexCurrElement = currentList.indexOf(currElement)
             val newCount = if (isPlus) currElement.second + 1 else currElement.second - 1
 
-            if (newCount == 0){
+            if (newCount == 0) {
                 currentList.removeAt(indexCurrElement)
                 _cartList.value = currentList
                 calculatingTotalSum(currentList.toList())
@@ -81,6 +82,7 @@ class CartModel : ViewModel() {
         _cartList.value = emptyList()
         calculatingTotalSum(emptyList())
     }
+
     companion object {
         val instance: CartModel by lazy { CartModel() }
     }

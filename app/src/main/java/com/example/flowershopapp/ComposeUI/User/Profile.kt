@@ -24,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,22 +31,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.flowershopapp.ComposeUI.Navigation.Screen
-import com.example.flowershopapp.Database.AppDatabase
 import com.example.flowershopapp.Entities.Model.AuthModel
 import com.example.flowershopapp.Entities.Model.User
 import com.example.flowershopapp.R
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 
 @Composable
-fun Profile(navController: NavController){
+fun Profile(navController: NavController) {
     var phoneNumber by remember { mutableStateOf("Ваш номер телефона") }
     var userName by remember { mutableStateOf("Имя пользователя") }
     var dateOfBirth by remember { mutableStateOf("01-01-2000") }
     val (user, setUser) = remember { mutableStateOf<User?>(null) }
-
-
 
     LaunchedEffect(Unit) {
         setUser(AuthModel.currentUser)
@@ -60,7 +54,7 @@ fun Profile(navController: NavController){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        user?.let{
+        user?.let {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -75,7 +69,11 @@ fun Profile(navController: NavController){
                     fontWeight = FontWeight.Medium
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Image(painter = painterResource(id = R.drawable.icons8_profile), contentDescription = "", Modifier.size(140.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.icons8_profile),
+                    contentDescription = "",
+                    Modifier.size(140.dp)
+                )
                 Spacer(modifier = Modifier.height(16.dp))
                 TextField(
                     value = user.userName,
@@ -108,7 +106,9 @@ fun Profile(navController: NavController){
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
-                    modifier = Modifier.fillMaxWidth().padding(start = 90.dp, end = 90.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 90.dp, end = 90.dp),
                     shape = RoundedCornerShape(5.dp),
                     onClick = { navController.navigate(Screen.Orders.route) },
                     colors = ButtonDefaults.buttonColors(
@@ -119,7 +119,9 @@ fun Profile(navController: NavController){
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(
-                    modifier = Modifier.fillMaxWidth().padding(start = 90.dp, end = 90.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 90.dp, end = 90.dp),
                     shape = RoundedCornerShape(5.dp),
                     onClick = { navController.navigate(Screen.Statistics.route) },
                     colors = ButtonDefaults.buttonColors(

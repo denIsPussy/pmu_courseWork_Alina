@@ -16,7 +16,11 @@ object AppViewModelProvider {
             BouquetCatalogViewModel(bouquetApplication().container.bouquetRestRepository)
         }
         initializer {
-            OrderViewModel(this.createSavedStateHandle(), bouquetApplication().container.orderRestRepository, bouquetApplication().container.orderBouquetRestRepository)
+            OrderViewModel(
+                this.createSavedStateHandle(),
+                bouquetApplication().container.orderRestRepository,
+                bouquetApplication().container.orderBouquetRestRepository
+            )
         }
         initializer {
             UserViewModel(bouquetApplication().container.userRestRepository)

@@ -30,13 +30,18 @@ class RestOrderRepository(
 ) : OrderRepository {
     override suspend fun getBouquetsByOrder(orderId: Int): Flow<List<Bouquet>> {
         var bouquets = service.getAllBouquets()
-        var bouquetsIdByOrderId = service.getOrdersBouquets().filter { it.orderId == orderId }.map { it.bouquetId }
+        var bouquetsIdByOrderId =
+            service.getOrdersBouquets().filter { it.orderId == orderId }.map { it.bouquetId }
         return flowOf(bouquets.map { bouquet ->
             bouquet.toBouquet()
         }.filter { it.bouquetId in bouquetsIdByOrderId })
     }
 
-    override suspend fun getOrdersByDate(userId: Int, startDate: String, endDate: String): Flow<OrderByDate> {
+    override suspend fun getOrdersByDate(
+        userId: Int,
+        startDate: String,
+        endDate: String
+    ): Flow<OrderByDate> {
         return flowOf(service.getOrdersByDate(userId, startDate, endDate).toOrderByDate())
     }
 
@@ -45,7 +50,6 @@ class RestOrderRepository(
         Log.d(RestOrderRepository::class.simpleName, "Get Orders")
 
         val pagingSourceFactory = { dbOrderRepository.getOrdersByUserPagingSource(id) }
-        var a = 5
         @OptIn(ExperimentalPagingApi::class)
         return Pager(
             config = PagingConfig(
@@ -73,6 +77,7 @@ class RestOrderRepository(
     override suspend fun delete(order: Order) {
         order.orderId?.let { service.deleteOrder(it).toOrder() }
     }
+
     override suspend fun getById(id: Int): Order {
         return service.getOrder(id).toOrder()
     }

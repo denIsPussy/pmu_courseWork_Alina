@@ -79,7 +79,7 @@ class BouquetRemoteMediator(
                         )
                     }
                 }
-                orderRestRepository.getOrdersByUser(AuthModel.currentUser.userId!!)
+                //orderRestRepository.getOrdersByUser(AuthModel.currentUser.userId!!)
                 orderBouquetRestRepository.getAll()
                 dbRemoteKeyRepository.createRemoteKeys(keys)
                 dbBouquetRepository.insertBouquets(bouquets)
@@ -95,14 +95,24 @@ class BouquetRemoteMediator(
     private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, Bouquet>): RemoteKeys? {
         return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
             ?.let { bouquet ->
-                bouquet.bouquetId?.let { dbRemoteKeyRepository.getAllRemoteKeys(it, RemoteKeyType.BOUQUET) }
+                bouquet.bouquetId?.let {
+                    dbRemoteKeyRepository.getAllRemoteKeys(
+                        it,
+                        RemoteKeyType.BOUQUET
+                    )
+                }
             }
     }
 
     private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, Bouquet>): RemoteKeys? {
         return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
             ?.let { bouquet ->
-                bouquet.bouquetId?.let { dbRemoteKeyRepository.getAllRemoteKeys(it, RemoteKeyType.BOUQUET) }
+                bouquet.bouquetId?.let {
+                    dbRemoteKeyRepository.getAllRemoteKeys(
+                        it,
+                        RemoteKeyType.BOUQUET
+                    )
+                }
             }
     }
 

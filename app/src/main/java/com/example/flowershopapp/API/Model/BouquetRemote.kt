@@ -6,7 +6,7 @@ import java.util.Base64
 
 @Serializable
 data class BouquetRemote(
-    val id: Int? = 0,
+    val id: Int? = null,
     val name: String = "",
     val quantityOfFlowers: Int = 0,
     val price: Int = 0,
@@ -22,7 +22,7 @@ fun BouquetRemote.toBouquet(): Bouquet = Bouquet(
 )
 
 fun Bouquet.toBouquetRemote(): BouquetRemote = BouquetRemote(
-    bouquetId,
+    null,
     name,
     quantityOfFlowers,
     price,

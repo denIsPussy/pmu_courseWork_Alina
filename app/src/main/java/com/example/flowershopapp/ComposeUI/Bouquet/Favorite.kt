@@ -23,14 +23,19 @@ import com.example.flowershopapp.Entities.Model.FavoriteModel
 fun Favorite(navController: NavController) {
     val bouquets by FavoriteModel.instance.bouquets.collectAsState()
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Избранное", fontFamily = FontFamily.Serif, fontSize = 40.sp,fontWeight = FontWeight.W600)
+        Text(
+            text = "Избранное",
+            fontFamily = FontFamily.Serif,
+            fontSize = 40.sp,
+            fontWeight = FontWeight.W600
+        )
         val padding = if (bouquets.size == 1) 95.dp else 0.dp
         LazyVerticalGrid(
-            columns = GridCells.Fixed(if (bouquets.size == 1) 1 else 2 ),
+            columns = GridCells.Fixed(if (bouquets.size == 1) 1 else 2),
             contentPadding = PaddingValues(start = padding, end = padding),
             modifier = Modifier.fillMaxSize(),
         ) {
-            items(bouquets) { bouquet->
+            items(bouquets) { bouquet ->
                 BouquetCard(bouquet = bouquet)
             }
         }

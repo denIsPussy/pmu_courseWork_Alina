@@ -11,7 +11,6 @@ import com.example.flowershopapp.Entities.Model.OrderBouquetCrossRef
 import com.example.flowershopapp.Entities.Model.OrderByDate
 import com.example.flowershopapp.Entities.Model.OrdersWithBouquets
 import com.example.flowershopapp.Entities.Repository.Order.OrderRepository
-import com.example.flowershopapp.Entities.Repository.OrderBouquets.OfflineOrdersWithBouquetsRepository
 import com.example.flowershopapp.Entities.Repository.OrderBouquets.OrdersWithBouquetsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -33,11 +32,11 @@ class OrderViewModel(
     var ordersListUiState: Flow<PagingData<Order>> = orderRepository.getOrdersByUser(userId)
         private set
 
-    private val _orderBouListUiState = MutableStateFlow<List<Pair<Bouquet, Int>>>(emptyList())
-    val orderBouListUiState: Flow<List<Pair<Bouquet, Int>>> = _orderBouListUiState.asStateFlow()
+    private val _orderBouquetListUiState = MutableStateFlow<List<Pair<Bouquet, Int>>>(emptyList())
+    val orderBouquetListUiState: Flow<List<Pair<Bouquet, Int>>> = _orderBouquetListUiState.asStateFlow()
 
-    private val _orderListUiState = MutableStateFlow<OrderByDate>(OrderByDate(0, 0))
-    val orderListUiState: Flow<OrderByDate> = _orderListUiState.asStateFlow()
+    private val _orderByDateListUiState = MutableStateFlow<OrderByDate>(OrderByDate(listOf(), 0, 0))
+    val orderByDateListUiState: Flow<OrderByDate> = _orderByDateListUiState.asStateFlow()
 
     init {
         loadBouquetsByOrder()
@@ -46,13 +45,13 @@ class OrderViewModel(
     private fun loadBouquetsByOrder() {
         viewModelScope.launch {
             if (orderId != -1) {
-                //_orderBouListUiState.value = orderRepository.getBouquetsByOrder(orderId).first()
+
                 orderRepository.getBouquetsByOrder(orderId).collect { bouquets ->
-                    withContext(Dispatchers.IO){
+                    withContext(Dispatchers.IO) {
                         val orderBouquet = orderBouquetRepository.getAll()
                         val orderBouquetMap = orderBouquet.associateBy { it.bouquetId }
-                        _orderBouListUiState.value = bouquets.map { bouquet ->
-                            val count = orderBouquetMap[bouquet.bouquetId]?.count ?: 0 // Если нет совпадения, используем 0
+                        _orderBouquetListUiState.value = bouquets.map { bouquet ->
+                            val count = orderBouquetMap[bouquet.bouquetId]?.count ?: 0
                             Pair(bouquet, count)
                         }
                     }
@@ -60,17 +59,25 @@ class OrderViewModel(
             }
         }
     }
+
     fun loadStatistics(startDate: String, endDate: String) {
         viewModelScope.launch {
-            _orderListUiState.value = orderRepository.getOrdersByDate(userId, startDate, endDate).first()
+            _orderByDateListUiState.value =
+                orderRepository.getOrdersByDate(userId, startDate, endDate).first()
         }
     }
 
-    fun createOrder(order: Order, bouquetsPair: List<Pair<Bouquet, Int>>){
+    fun createOrder(order: Order, bouquetsPair: List<Pair<Bouquet, Int>>) {
         viewModelScope.launch {
             val createdOrder = orderRepository.insertWithReturn(order)
             bouquetsPair.forEach { bouquetPair ->
-                orderBouquetRepository.insert(OrderBouquetCrossRef(createdOrder.orderId!!, bouquetPair.first.bouquetId!!, bouquetPair.second))
+                orderBouquetRepository.insert(
+                    OrderBouquetCrossRef(
+                        createdOrder.orderId!!,
+                        bouquetPair.first.bouquetId!!,
+                        bouquetPair.second
+                    )
+                )
             }
         }
     }

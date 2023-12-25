@@ -23,6 +23,7 @@ interface AppContainer {
         const val LIMIT = 5
     }
 }
+
 class AppDataContainer(private val context: Context) : AppContainer {
     private val userRepository: OfflineUserRepository by lazy {
         OfflineUserRepository(AppDatabase.getInstance(context).userDao())

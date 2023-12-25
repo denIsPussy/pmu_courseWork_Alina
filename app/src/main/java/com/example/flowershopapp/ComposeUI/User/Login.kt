@@ -27,7 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,16 +39,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.flowershopapp.ComposeUI.AppViewModelProvider
 import com.example.flowershopapp.ComposeUI.Navigation.Screen
-import com.example.flowershopapp.Database.AppDatabase
 import com.example.flowershopapp.Entities.Model.AuthModel
 import com.example.flowershopapp.Entities.Model.User
 import com.example.flowershopapp.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 @Composable
-fun Login(navController: NavController,
-          viewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
+fun Login(
+    navController: NavController,
+    viewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
+) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var usernameError by remember { mutableStateOf<String?>(null) }
@@ -87,7 +85,7 @@ fun Login(navController: NavController,
                 if (user != null) {
                     onAuthenticationSuccess(user)
                 } else {
-                    // Обработка неудачного входа
+
                 }
             }
         }

@@ -73,7 +73,7 @@ class OrderRemoteMediator(
                         )
                     }
                 }
-                //userOrderRestRepository.getAll()
+
                 dbRemoteKeyRepository.createRemoteKeys(keys)
                 dbOrderRepository.insertOrders(orders)
             }
@@ -88,14 +88,24 @@ class OrderRemoteMediator(
     private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, Order>): RemoteKeys? {
         return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
             ?.let { Order ->
-                Order.orderId?.let { dbRemoteKeyRepository.getAllRemoteKeys(it, RemoteKeyType.ORDER) }
+                Order.orderId?.let {
+                    dbRemoteKeyRepository.getAllRemoteKeys(
+                        it,
+                        RemoteKeyType.ORDER
+                    )
+                }
             }
     }
 
     private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, Order>): RemoteKeys? {
         return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
             ?.let { Order ->
-                Order.orderId?.let { dbRemoteKeyRepository.getAllRemoteKeys(it, RemoteKeyType.ORDER) }
+                Order.orderId?.let {
+                    dbRemoteKeyRepository.getAllRemoteKeys(
+                        it,
+                        RemoteKeyType.ORDER
+                    )
+                }
             }
     }
 
