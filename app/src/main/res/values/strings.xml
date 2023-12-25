@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">FlowerShopApp</string>
+    <string name="signup_title">Регистрация</string>
+    <string name="login_title">Вход</string>
+    <string name="boot_title">Загрузочный экран</string>
+    <string name="bouquet_catalog_title">Каталог</string>
+    <string name="favorite_title">Избранное</string>
+    <string name="shoppingCart_title">Корзина</string>
+    <string name="profile_title">Профиль</string>
+    <string name="populate_title">Популярное</string>
+</resources>
