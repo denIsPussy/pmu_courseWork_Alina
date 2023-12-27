@@ -37,8 +37,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.flowershopapp.API.APIStatus
 import com.example.flowershopapp.ComposeUI.AppViewModelProvider
 import com.example.flowershopapp.ComposeUI.Navigation.Screen
+import com.example.flowershopapp.ComposeUI.Network.ErrorPlaceholder
+import com.example.flowershopapp.ComposeUI.Network.LoadingPlaceholder
 import com.example.flowershopapp.Entities.Model.AuthModel
 import com.example.flowershopapp.Entities.Model.User
 import com.example.flowershopapp.R
@@ -48,6 +51,13 @@ fun Login(
     navController: NavController,
     viewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    if (viewModel.apiStatus == APIStatus.ERROR) {
+        ErrorPlaceholder(
+            message = viewModel.apiError,
+            onBack = { navController.navigate(Screen.Login.route) }
+        )
+        return
+    }
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var usernameError by remember { mutableStateOf<String?>(null) }
@@ -90,82 +100,90 @@ fun Login(
             }
         }
     }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = colorResource(id = R.color.backgroundWindow)),
-        verticalArrangement = Arrangement.Top, horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "",
-                Modifier.size(180.dp)
-            )
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(2f)
-                .padding(bottom = 10.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(id = R.string.login_title),
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Medium
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                value = username,
-                onValueChange = { username = it },
-                label = { Text("Имя пользователя") },
-                isError = usernameError != null,
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = colorResource(id = R.color.textFieldContainer),
-                    focusedContainerColor = colorResource(id = R.color.textFieldContainer)
-                )
-            )
-            if (usernameError != null) {
-                Text(text = usernameError!!, color = Color.Red)
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            TextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Пароль") },
-                isError = passwordError != null,
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = colorResource(id = R.color.textFieldContainer),
-                    focusedContainerColor = colorResource(id = R.color.textFieldContainer)
-                )
-            )
-            if (usernameError != null) {
-                Text(text = passwordError!!, color = Color.Red)
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                shape = RoundedCornerShape(5.dp), onClick = { login() },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.button)
-                )
+    when (viewModel.apiStatus) {
+        APIStatus.DONE -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = colorResource(id = R.color.backgroundWindow)),
+                verticalArrangement = Arrangement.Top, horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Вход")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            TextButton(onClick = { navController.navigate(Screen.Signup.route) }) {
-                Text(text = "У меня нет учетной записи")
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "",
+                        Modifier.size(180.dp)
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(2f)
+                        .padding(bottom = 10.dp),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.login_title),
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TextField(
+                        value = username,
+                        onValueChange = { username = it },
+                        label = { Text("Имя пользователя") },
+                        isError = usernameError != null,
+                        colors = TextFieldDefaults.colors(
+                            unfocusedContainerColor = colorResource(id = R.color.textFieldContainer),
+                            focusedContainerColor = colorResource(id = R.color.textFieldContainer)
+                        )
+                    )
+                    if (usernameError != null) {
+                        Text(text = usernameError!!, color = Color.Red)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = { Text("Пароль") },
+                        isError = passwordError != null,
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        colors = TextFieldDefaults.colors(
+                            unfocusedContainerColor = colorResource(id = R.color.textFieldContainer),
+                            focusedContainerColor = colorResource(id = R.color.textFieldContainer)
+                        )
+                    )
+                    if (usernameError != null) {
+                        Text(text = passwordError!!, color = Color.Red)
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        shape = RoundedCornerShape(5.dp), onClick = { login() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.button)
+                        )
+                    ) {
+                        Text("Вход")
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TextButton(onClick = { navController.navigate(Screen.Signup.route) }) {
+                        Text(text = "У меня нет учетной записи")
+                    }
+                }
             }
         }
+        APIStatus.LOADING -> LoadingPlaceholder()
+        else -> ErrorPlaceholder(
+            message = viewModel.apiError,
+            onBack = { navController.navigate(Screen.Login.route) }
+        )
     }
 }

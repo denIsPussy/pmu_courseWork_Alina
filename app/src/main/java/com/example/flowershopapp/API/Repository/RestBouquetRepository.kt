@@ -52,8 +52,8 @@ class RestBouquetRepository(
         ).flow
     }
 
-    override suspend fun getPopulateBouquets(): Flow<List<Bouquet>> {
-        return flowOf(service.getPopularBouquets().map { bouquet -> bouquet.toBouquet() })
+    override suspend fun getPopulateBouquets(): List<Bouquet> {
+        return service.getPopularBouquets().map { bouquet -> bouquet.toBouquet() }
     }
 
     override suspend fun getBouquet(id: Int): Bouquet =

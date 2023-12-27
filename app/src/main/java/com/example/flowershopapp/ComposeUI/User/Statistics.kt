@@ -34,8 +34,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
+import com.example.flowershopapp.API.APIStatus
 import com.example.flowershopapp.ComposeUI.AppViewModelProvider
 import com.example.flowershopapp.ComposeUI.Navigation.Screen
+import com.example.flowershopapp.ComposeUI.Network.ErrorPlaceholder
+import com.example.flowershopapp.ComposeUI.Network.LoadingPlaceholder
 import com.example.flowershopapp.ComposeUI.Order.OrderItem
 import com.example.flowershopapp.Entities.Model.OrderByDate
 import com.example.flowershopapp.R
@@ -46,7 +49,13 @@ fun Statistics(
     navController: NavController,
     viewModel: OrderViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-
+    if (viewModel.apiStatus == APIStatus.ERROR) {
+        ErrorPlaceholder(
+            message = viewModel.apiError,
+            onBack = { navController.navigate(Screen.Profile.route) }
+        )
+        return
+    }
 
     var startDateError by remember { mutableStateOf<String?>(null) }
     var endDateError by remember { mutableStateOf<String?>(null) }
@@ -103,107 +112,117 @@ fun Statistics(
         }
     }
 
-    Column(
-        modifier = Modifier
-            //.fillMaxSize()
-            .background(color = colorResource(id = R.color.backgroundWindow)),
-        verticalArrangement = Arrangement.Top, horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp, bottom = 10.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Статистика по заказам",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Medium
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 50.dp, end = 50.dp),
-                shape = RoundedCornerShape(5.dp),
-                onClick = { startDateDialog.show() },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.button)
-                )
-            ) {
-                Text(startDate)
-            }
-            if (startDateError != null) {
-                Text(text = startDateError!!, color = Color.Red)
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 50.dp, end = 50.dp),
-                shape = RoundedCornerShape(5.dp),
-                onClick = { endDateDialog.show() },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.button)
-                )
-            ) {
-                Text(endDate)
-            }
-            if (endDateError != null) {
-                Text(text = endDateError!!, color = Color.Red)
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                shape = RoundedCornerShape(5.dp), onClick = { getStatistics() },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.button)
-                )
-            ) {
-                Text("Получить данные")
-            }
+    when (viewModel.apiStatus) {
+        APIStatus.DONE -> {
+
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp, bottom = 10.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
+                    //.fillMaxSize()
+                    .background(color = colorResource(id = R.color.backgroundWindow)),
+                verticalArrangement = Arrangement.Top, horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Всего заказов: ${orderListUiState.value.orderCount}",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium
-                )
-
-                Text(
-                    text = "Общая сумма: ${orderListUiState.value.totalSum}",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-        }
-        Text(
-            text = "Заказы",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Medium
-        )
-        LazyColumn(
-            modifier = Modifier
-                .padding(top = 16.dp)
-        ) {
-            items(
-                items = orderListUiState.value.orders
-            ) { order ->
-                OrderItem(order){
-                    navController.navigate(
-                        Screen.OrderBouquets.route.replace(
-                            "{id}",
-                            order.orderId.toString()
-                        )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp, bottom = 10.dp),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Статистика по заказам",
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Medium
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 50.dp, end = 50.dp),
+                        shape = RoundedCornerShape(5.dp),
+                        onClick = { startDateDialog.show() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.button)
+                        )
+                    ) {
+                        Text(startDate)
+                    }
+                    if (startDateError != null) {
+                        Text(text = startDateError!!, color = Color.Red)
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 50.dp, end = 50.dp),
+                        shape = RoundedCornerShape(5.dp),
+                        onClick = { endDateDialog.show() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.button)
+                        )
+                    ) {
+                        Text(endDate)
+                    }
+                    if (endDateError != null) {
+                        Text(text = endDateError!!, color = Color.Red)
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        shape = RoundedCornerShape(5.dp), onClick = { getStatistics() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.button)
+                        )
+                    ) {
+                        Text("Получить данные")
+                    }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 20.dp, bottom = 10.dp),
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Всего заказов: ${orderListUiState.value.orderCount}",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+
+                        Text(
+                            text = "Общая сумма: ${orderListUiState.value.totalSum}",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+                Text(
+                    text = "Заказы",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                ) {
+                    items(
+                        items = orderListUiState.value.orders
+                    ) { order ->
+                        OrderItem(order){
+                            navController.navigate(
+                                Screen.OrderBouquets.route.replace(
+                                    "{id}",
+                                    order.orderId.toString()
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
+        APIStatus.LOADING -> LoadingPlaceholder()
+        else -> ErrorPlaceholder(
+            message = viewModel.apiError,
+            onBack = { navController.navigate(Screen.Profile.route) }
+        )
     }
 }

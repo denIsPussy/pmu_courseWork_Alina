@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.flowershopapp.BouquetApplication
 import com.example.flowershopapp.ComposeUI.Bouquet.BouquetCatalogViewModel
+import com.example.flowershopapp.ComposeUI.Bouquet.PopulateBouquetViewModel
 import com.example.flowershopapp.ComposeUI.User.OrderViewModel
 import com.example.flowershopapp.ComposeUI.User.UserViewModel
 
@@ -14,6 +15,9 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             BouquetCatalogViewModel(bouquetApplication().container.bouquetRestRepository)
+        }
+        initializer {
+            PopulateBouquetViewModel(bouquetApplication().container.bouquetRestRepository)
         }
         initializer {
             OrderViewModel(

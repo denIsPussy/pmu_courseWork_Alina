@@ -233,7 +233,7 @@ fun Navhost(
             })
         )
         {
-            OrderBouquets()
+            OrderBouquets(navController)
         }
     }
 }

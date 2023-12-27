@@ -43,8 +43,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.flowershopapp.API.APIStatus
 import com.example.flowershopapp.ComposeUI.AppViewModelProvider
 import com.example.flowershopapp.ComposeUI.Navigation.Screen
+import com.example.flowershopapp.ComposeUI.Network.ErrorPlaceholder
+import com.example.flowershopapp.ComposeUI.Network.LoadingPlaceholder
 import com.example.flowershopapp.R
 import java.util.Calendar
 
@@ -53,6 +56,14 @@ fun Signup(
     navController: NavController,
     viewModel: UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    if (viewModel.apiStatus == APIStatus.ERROR) {
+        ErrorPlaceholder(
+            message = viewModel.apiError,
+            onBack = { navController.navigate(Screen.Signup.route) }
+        )
+        return
+    }
+
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var dateOfBirth by remember { mutableStateOf("Дата рождения") }
@@ -121,104 +132,114 @@ fun Signup(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = colorResource(id = R.color.backgroundWindow)),
-        verticalArrangement = Arrangement.Top, horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "",
-                Modifier.size(180.dp)
-            )
-        }
-        Column(
-            modifier = Modifier
-                .wrapContentWidth()
-                .weight(2f)
-                .padding(bottom = 10.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(id = R.string.signup_title),
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Medium
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                value = username,
-                onValueChange = { username = it },
-                label = { Text("Имя пользователя") },
-                isError = usernameError != null,
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = colorResource(id = R.color.textFieldContainer),
-                    focusedContainerColor = colorResource(id = R.color.textFieldContainer)
-                )
-            )
-            if (usernameError != null) {
-                Text(text = usernameError!!, color = Color.Red)
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                value = phoneNumber,
-                onValueChange = { phoneNumber = it },
-                label = { Text("Номер телефона") },
-                isError = phoneNumberError != null,
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = colorResource(id = R.color.textFieldContainer),
-                    focusedContainerColor = colorResource(id = R.color.textFieldContainer)
-                )
-            )
-            if (phoneNumberError != null) {
-                Text(text = phoneNumberError!!, color = Color.Red)
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
+    when (viewModel.apiStatus) {
+        APIStatus.DONE -> {
+            Column(
                 modifier = Modifier
-                    .background(colorResource(id = R.color.textFieldContainer))
-                    .clickable { dateOfBirthDialog.show() }
+                    .fillMaxSize()
+                    .background(color = colorResource(id = R.color.backgroundWindow)),
+                verticalArrangement = Arrangement.Top, horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "",
+                        Modifier.size(180.dp)
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .weight(2f)
+                        .padding(bottom = 10.dp),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.signup_title),
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TextField(
+                        value = username,
+                        onValueChange = { username = it },
+                        label = { Text("Имя пользователя") },
+                        isError = usernameError != null,
+                        colors = TextFieldDefaults.colors(
+                            unfocusedContainerColor = colorResource(id = R.color.textFieldContainer),
+                            focusedContainerColor = colorResource(id = R.color.textFieldContainer)
+                        )
+                    )
+                    if (usernameError != null) {
+                        Text(text = usernameError!!, color = Color.Red)
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TextField(
+                        value = phoneNumber,
+                        onValueChange = { phoneNumber = it },
+                        label = { Text("Номер телефона") },
+                        isError = phoneNumberError != null,
+                        colors = TextFieldDefaults.colors(
+                            unfocusedContainerColor = colorResource(id = R.color.textFieldContainer),
+                            focusedContainerColor = colorResource(id = R.color.textFieldContainer)
+                        )
+                    )
+                    if (phoneNumberError != null) {
+                        Text(text = phoneNumberError!!, color = Color.Red)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier
+                            .background(colorResource(id = R.color.textFieldContainer))
+                            .clickable { dateOfBirthDialog.show() }
 
-            ) {
-                Text(dateOfBirth, fontSize = 16.sp, color = Color.Black)
-            }
-            if (dateOfBirthError != null) {
-                Text(text = dateOfBirthError!!, color = Color.Red)
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            TextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Пароль") },
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = colorResource(id = R.color.textFieldContainer),
-                    focusedContainerColor = colorResource(id = R.color.textFieldContainer)
-                )
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                shape = RoundedCornerShape(5.dp),
-                onClick = { register() },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.button)
-                )
-            ) {
-                Text("Создать")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            TextButton(onClick = { navController.navigate(Screen.Login.route) }) {
-                Text(text = "У меня есть учетная запись")
+                    ) {
+                        Text(dateOfBirth, fontSize = 16.sp, color = Color.Black)
+                    }
+                    if (dateOfBirthError != null) {
+                        Text(text = dateOfBirthError!!, color = Color.Red)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = { Text("Пароль") },
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        colors = TextFieldDefaults.colors(
+                            unfocusedContainerColor = colorResource(id = R.color.textFieldContainer),
+                            focusedContainerColor = colorResource(id = R.color.textFieldContainer)
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        shape = RoundedCornerShape(5.dp),
+                        onClick = { register() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.button)
+                        )
+                    ) {
+                        Text("Создать")
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TextButton(onClick = { navController.navigate(Screen.Login.route) }) {
+                        Text(text = "У меня есть учетная запись")
+                    }
+                }
             }
         }
+
+        APIStatus.LOADING -> LoadingPlaceholder()
+        else -> ErrorPlaceholder(
+            message = viewModel.apiError,
+            onBack = { }
+        )
     }
 }

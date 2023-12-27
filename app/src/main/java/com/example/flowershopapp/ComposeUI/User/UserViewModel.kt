@@ -5,26 +5,29 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.flowershopapp.ComposeUI.Network.NetworkViewModel
 import com.example.flowershopapp.Entities.Model.User
 import com.example.flowershopapp.Entities.Repository.User.UserRepository
 import kotlinx.coroutines.launch
 
 class UserViewModel(
     private val userRepository: UserRepository
-) : ViewModel() {
+) : NetworkViewModel() {
     var userUiState by mutableStateOf(UserUiState())
         private set
 
     fun loginUser(username: String, password: String, onResult: (User?) -> Unit) {
-        viewModelScope.launch {
-            userRepository.getAll()
-            val user = userRepository.getUserByName(username)
-            if (user != null && user.password == password) {
-                onResult(user)
-            } else {
-                onResult(null)
+        runInScope(
+            actionSuccess = {
+                userRepository.getAll()
+                val user = userRepository.getUserByName(username)
+                if (user.password == password) {
+                    onResult(user)
+                } else {
+                    onResult(null)
+                }
             }
-        }
+        )
     }
 
 
@@ -35,11 +38,12 @@ class UserViewModel(
         phoneNumber: String,
         relocate: () -> Unit
     ) {
-        viewModelScope.launch {
-            val user = userRepository.insert(User(username, dateOfBirth, phoneNumber, password))
-            if (user != null)
+        runInScope(
+            actionSuccess = {
+                val user = userRepository.insert(User(username, dateOfBirth, phoneNumber, password))
                 relocate()
-        }
+            }
+        )
     }
 }
 

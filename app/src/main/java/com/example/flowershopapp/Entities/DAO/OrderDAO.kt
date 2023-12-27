@@ -11,7 +11,7 @@ import com.example.flowershopapp.Entities.Model.OrdersWithBouquets
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface OrderDAO {
+    interface OrderDAO {
     @Query(
         """
         SELECT orders.* FROM orders

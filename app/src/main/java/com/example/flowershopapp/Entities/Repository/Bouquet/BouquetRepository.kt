@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface BouquetRepository {
     fun getAll(): Flow<PagingData<Bouquet>>
-    suspend fun getPopulateBouquets(): Flow<List<Bouquet>>
+    suspend fun getPopulateBouquets(): List<Bouquet>
     suspend fun getBouquet(id: Int): Bouquet
     suspend fun insert(bouquet: Bouquet)
     suspend fun update(bouquet: Bouquet)

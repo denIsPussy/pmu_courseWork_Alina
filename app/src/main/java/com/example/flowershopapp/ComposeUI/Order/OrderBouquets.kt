@@ -39,7 +39,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.flowershopapp.API.APIStatus
 import com.example.flowershopapp.ComposeUI.AppViewModelProvider
+import com.example.flowershopapp.ComposeUI.Navigation.Screen
+import com.example.flowershopapp.ComposeUI.Network.ErrorPlaceholder
+import com.example.flowershopapp.ComposeUI.Network.LoadingPlaceholder
 import com.example.flowershopapp.ComposeUI.User.OrderViewModel
 import com.example.flowershopapp.Entities.Model.Bouquet
 import com.example.flowershopapp.Entities.Model.CartModel
@@ -47,28 +52,45 @@ import com.example.flowershopapp.Entities.Model.FavoriteModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun OrderBouquets(viewModel: OrderViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
+fun OrderBouquets(navController: NavController, viewModel: OrderViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
+    if (viewModel.apiStatus == APIStatus.ERROR) {
+        ErrorPlaceholder(
+            message = viewModel.apiError,
+            onBack = { navController.navigate(Screen.Profile.route) }
+        )
+        return
+    }
     var bouquetListUiState = viewModel.orderBouquetListUiState.collectAsState(initial = emptyList())
     val padding = if (bouquetListUiState.value.size == 1) 95.dp else 0.dp
-    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "Букеты",
-            fontFamily = FontFamily.Serif,
-            fontSize = 40.sp,
-            fontWeight = FontWeight.W600
-        )
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(if (bouquetListUiState.value.size == 1) 1 else 2),
-            contentPadding = PaddingValues(start = padding, end = padding)
-        ) {
-            bouquetListUiState?.let {
-                items(
-                    items = bouquetListUiState.value,
-                    key = { it.first.bouquetId!! }) { bouquetPair ->
-                    HistoryBouquetCard(bouquet = bouquetPair.first, bouquetPair.second)
+
+    when (viewModel.apiStatus) {
+        APIStatus.DONE -> {
+            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "Букеты",
+                    fontFamily = FontFamily.Serif,
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.W600
+                )
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(if (bouquetListUiState.value.size == 1) 1 else 2),
+                    contentPadding = PaddingValues(start = padding, end = padding)
+                ) {
+                    bouquetListUiState?.let {
+                        items(
+                            items = bouquetListUiState.value,
+                            key = { it.first.bouquetId!! }) { bouquetPair ->
+                            HistoryBouquetCard(bouquet = bouquetPair.first, bouquetPair.second)
+                        }
+                    }
                 }
             }
         }
+        APIStatus.LOADING -> LoadingPlaceholder()
+        else -> ErrorPlaceholder(
+            message = viewModel.apiError,
+            onBack = { navController.navigate(Screen.Profile.route) }
+        )
     }
 }
 

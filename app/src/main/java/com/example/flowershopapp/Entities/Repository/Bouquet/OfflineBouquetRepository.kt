@@ -18,7 +18,7 @@ class OfflineBouquetRepository(private val bouquetDAO: BouquetDAO) : BouquetRepo
         pagingSourceFactory = bouquetDAO::getAll
     ).flow
 
-    override suspend fun getPopulateBouquets(): Flow<List<Bouquet>> {
+    override suspend fun getPopulateBouquets(): List<Bouquet> {
         TODO("Not yet implemented")
     }
 
